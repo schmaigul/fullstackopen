@@ -1,3 +1,5 @@
+import React from 'react'
+
 const Persons = ({ filter, deletePerson }) => {
   return (
     filter.map(person =>
@@ -10,7 +12,7 @@ const Persons = ({ filter, deletePerson }) => {
 const Person = ({ person, deletePerson }) => {
   return (
     <div>
-      {person.name} {person.number}  <button type="button" onClick={deletePerson} value={person.id}>delete</button>
+      {person.name} {person.number}  <button type="button" onClick={() => deletePerson(person.id)}>delete</button>
     </div>
   )
 }

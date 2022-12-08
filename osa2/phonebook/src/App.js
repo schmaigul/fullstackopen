@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import React from 'react';
 import Persons from "./components/Persons"
 import PersonForm from "./components/PersonForm"
 import Filter from "./components/Filter"
@@ -26,7 +27,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     const added = persons.some(person => person.name === newName)
-    const foundPerson = persons.find(person => person.name == newName)
+    const foundPerson = persons.find(person => person.name === newName)
     if (added) {
       if (window.confirm(`${foundPerson.name} is already added to phonebook, replace the old
       number with a new one?`)) {
@@ -43,7 +44,7 @@ const App = () => {
             setNewNumber("")
           })
           .catch(error => {
-            setError(`Error: Information of ${newName} has already been removed from the server`)
+            setError(`Error: ${error.response.data.error}`)
             setTimeout(() => {
               setError(null)
             }, 5000)
@@ -65,25 +66,31 @@ const App = () => {
           setNewName("")
           setNewNumber("")
         })
+        .catch(error => {
+          setError(`Error: New credentials are not valid`)
+          setTimeout(() => {
+            setError(null)
+          }, 5000)
+        })
     }
   }
 
-  const deletePerson = (event) => {
-    const id = event.target.value.toString()
-    console.log("The id is " + id)
-    const name = persons.find(person => person.id.toString() === id)
-    if (window.confirm(`Delete ${name.name} ?`) === true)
-      personService.remove(id)
+  const deletePerson = id => {
+    const filteredPerson = persons.find(person => person.id === id)
+    const personId = filteredPerson.id
+    const personName = filteredPerson.name
+    if (window.confirm(`Delete ${personName} ?`) === true)
+      personService.remove(personId)
         .then(newData => {
           console.log(newData)
-          setPersons(persons.filter(person => person.id.toString() !== id))
-          setError(`Deleted ${name.name}`)
+          setPersons(persons.filter(person => person.id !== personId))
+          setError(`Deleted ${personName}`)
           setTimeout(() => {
             setError(null)
           }, 3000)
         })
         .catch(error => {
-          setError(`Error: Information of ${name.name} has already been removed from the server`)
+          setError(`Error: Information of ${personName} has already been removed from the server`)
           setTimeout(() => {
             setError(null)
           }, 5000)
